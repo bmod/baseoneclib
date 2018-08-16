@@ -16,7 +16,8 @@ public:
 
     void clear();
 
-signals:
+Q_SIGNALS:
+
     void fileModified(const QString& filename);
 
 private:

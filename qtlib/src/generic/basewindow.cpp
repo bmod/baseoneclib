@@ -1,11 +1,10 @@
 #include "basewindow.h"
-#include <QSettings>
+#include "autosettings.h"
+
+
 #include <QApplication>
 
-#define WIN_GEO "windowGeometry"
-#define WIN_STATE "windowState"
-
-BaseWindow::BaseWindow()  {
+BaseWindow::BaseWindow() {
     setWindowTitle(QApplication::applicationName());
     setDockNestingEnabled(true);
     mWindowMenu = new QMenu("Window");
@@ -13,31 +12,29 @@ BaseWindow::BaseWindow()  {
 }
 
 QDockWidget* BaseWindow::addDock(const QString& name, QWidget* widget, Qt::DockWidgetArea area) {
-    auto dock = new QDockWidget(this);
+    QDockWidget* dock = new QDockWidget(this);
     dock->setObjectName(name);
     dock->setWidget(widget);
     dock->setWindowTitle(name);
 
-    auto action = mWindowMenu->addAction(name);
+    if (widget->objectName().isEmpty())
+        widget->setObjectName(QString("%1_Widget").arg(name));
+
+    QAction* action = mWindowMenu->addAction(name);
     action->setCheckable(true);
     action->setChecked(true);
-    connect(action, &QAction::triggered, [dock, action]() {
-        dock->setVisible(action->isChecked());
-    });
+    connect(action, &QAction::triggered, [dock, action]() { dock->setVisible(action->isChecked()); });
     addDockWidget(area, dock);
     return dock;
 }
 
 void BaseWindow::showEvent(QShowEvent* event) {
     QWidget::showEvent(event);
-    QSettings s;
-    restoreGeometry(s.value(WIN_GEO).toByteArray());
-    restoreState(s.value(WIN_STATE).toByteArray());
+    AutoSettings::get().restore(*this);
 }
 
 void BaseWindow::closeEvent(QCloseEvent* event) {
-    QSettings s;
-    s.setValue(WIN_STATE, saveState());
-    s.setValue(WIN_GEO, saveGeometry());
+    AutoSettings::get().store(*this);
     QWidget::closeEvent(event);
 }
+

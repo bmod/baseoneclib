@@ -1,22 +1,34 @@
 #pragma once
 
+#include <QDockWidget>
 #include <QMainWindow>
 #include <QMenu>
-#include <QDockWidget>
 #include <QMenuBar>
+#include <QtCore/QSettings>
 
 
-
+/**
+ * Extension of QMainWindow, automatically saves and restores many windowsettings.
+ */
 class BaseWindow : public QMainWindow {
-//    Q_OBJECT
 public:
+    /**
+     * Constructor
+     */
     BaseWindow();
-    virtual ~BaseWindow() {}
+
+    /**
+     * Destructor
+     */
+    virtual ~BaseWindow() {
+    }
 
     /**
      * @return The QMenu that contains the list of available windows
      */
-    QMenu* windowMenu() { return mWindowMenu; }
+    QMenu* getWindowMenu() {
+        return mWindowMenu;
+    }
 
     /**
      * Add a QWidget to this window, display it as a dockwidget and add a toggle menuitem to the menubar
@@ -27,10 +39,27 @@ public:
     QDockWidget* addDock(const QString& name, QWidget* widget, Qt::DockWidgetArea area = Qt::TopDockWidgetArea);
 
 protected:
+    /**
+     * Override from QMainWindow
+     */
     void showEvent(QShowEvent* event) override;
 
+    /**
+     * Override from QMainWindow
+     */
     void closeEvent(QCloseEvent* event) override;
 
+    /**
+     * Save the user-level application settings
+     * @param settings The QSettings object to use
+     */
+    void saveSettings(QSettings& settings);
+
+    /**
+     * Restore the user-level application settings
+     * @param settings The QSettings object to use
+     */
+    void restoreSettings(QSettings& settings);
 
 private:
     QMenu* mWindowMenu;

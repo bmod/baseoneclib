@@ -7,13 +7,11 @@
 #include <QtGui/QStandardItemModel>
 #include <functional>
 
-static qreal lerp(const qreal& a, const qreal& b, qreal p)
-{
+static qreal lerp(const qreal& a, const qreal& b, qreal p) {
     return a + (b - a) * p;
 }
 
-static QColor lerpCol(const QColor& a, const QColor& b, qreal p)
-{
+static QColor lerpCol(const QColor& a, const QColor& b, qreal p) {
     QColor c;
     c.setRgbF(lerp(a.redF(), b.redF(), p),
               lerp(a.greenF(), b.greenF(), p),
@@ -21,15 +19,13 @@ static QColor lerpCol(const QColor& a, const QColor& b, qreal p)
     return c;
 }
 
-static const QColor& softForeground()
-{
+static const QColor& softForeground() {
     static QColor c = lerpCol(QApplication::palette().color(QPalette::Normal, QPalette::WindowText),
                               QApplication::palette().color(QPalette::Disabled, QPalette::WindowText), 0.5);
     return c;
 }
 
-static const QColor& softBackground()
-{
+static const QColor& softBackground() {
     static QColor c = QApplication::palette().color(QPalette::Normal, QPalette::Window).darker(102);
     return c;
 }
@@ -42,8 +38,8 @@ static const QColor& softBackground()
  * @return false if the the visitor has decided to stop traversal
  */
 static bool
-traverse(const QAbstractItemModel& model, std::function<bool(const QModelIndex&)> visitor, QModelIndex parent = QModelIndex())
-{
+traverse(const QAbstractItemModel& model, std::function<bool(const QModelIndex&)> visitor,
+         QModelIndex parent = QModelIndex()) {
     for (int r = 0; r < model.rowCount(parent); r++) {
         auto index = model.index(r, 0, parent);
         if (!visitor(index))
@@ -55,8 +51,8 @@ traverse(const QAbstractItemModel& model, std::function<bool(const QModelIndex&)
     return true;
 }
 
-static QModelIndex findItemInModel(const QAbstractItemModel& model, std::function<bool(const QModelIndex& idx)> condition)
-{
+static QModelIndex
+findItemInModel(const QAbstractItemModel& model, std::function<bool(const QModelIndex& idx)> condition) {
     QModelIndex foundIndex;
 
     traverse(model, [&foundIndex, condition](const QModelIndex& idx) -> bool {

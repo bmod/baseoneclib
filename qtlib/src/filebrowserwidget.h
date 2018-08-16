@@ -9,15 +9,18 @@
 #include <QtCore/QSettings>
 
 class FileBrowserWidget : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 public:
     FileBrowserWidget(const QString& label);
+
     void setFileFilter(const QString& filter) { mFileFilter = filter; }
+
     const QString filename() { return mLineEdit.text(); }
 
     void setFilename(const QString& filename);
 
-signals:
+Q_SIGNALS:
+
     void filenameChanged(const QString& filename);
 
 private:
